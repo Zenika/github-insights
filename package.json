@@ -1,0 +1,21 @@
+{
+  "name": "github-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=development node index.js",
+    "stats": "NODE_ENV=development node stats.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "apollo-boost": "^0.1.27",
+    "apollo-link-http": "^1.5.9",
+    "chalk": "^2.4.2",
+    "dotenv": "^6.2.0",
+    "graphql": "^14.1.1",
+    "graphql-tag": "^2.10.1",
+    "httpie": "^1.1.0",
+    "node-fetch": "^2.3.0",
+    "progress": "^2.0.3"
+  }
+}
