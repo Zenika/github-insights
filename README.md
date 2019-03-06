@@ -33,5 +33,5 @@ yarn start <organization_name>
 The following command allows you to get insights from the information
 
 ```
-yarn stats
+yarn stats <organization_name>
 ```
