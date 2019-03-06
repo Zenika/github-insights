@@ -17,7 +17,6 @@ Create an `.env` file
 ```
 GITHUB_ID=<github_id>
 GITHUB_OAUTH=<oauth to access the API>
-GITHUB_ORGA=<organization_name>
 ```
 
 If you do not know how to get the `GITHUB_OAUTH`, please see this [page](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
@@ -28,7 +27,7 @@ You have to create a token with the `read:org` access.
 The following command allows you to get information on your organization
 
 ```
-yarn start
+yarn start <organization_name>
 ```
 
 The following command allows you to get insights from the information
