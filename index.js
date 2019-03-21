@@ -9,6 +9,13 @@
   const githubId = process.env.GITHUB_ID
   const githubToken = process.env.GITHUB_OAUTH
   const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
+  const rootDir = 'data'
+
+  if (!fs.existsSync(path.join(__dirname, rootDir))) {
+    fs.mkdirSync(path.join(__dirname, rootDir), {},  (err) => {
+      if (err) throw err;
+    })
+  }
 
   const client = new ApolloClient({
     uri: `https://api.github.com/graphql?access_token=${githubToken}`,
@@ -30,6 +37,7 @@
   let members
   try {
     members = await getMembers()
+    fs.writeFileSync(path.join(__dirname, rootDir, 'members.json'), JSON.stringify(members, undefined, 2))
   } catch(e) {
     console.error('Error while fetching members', JSON.stringify(e, undefined, 2))
     process.exit(0)
@@ -48,33 +56,45 @@
 
   for (member of members) {
     await sleep(25)
+    let repositories = []
+    bar.tick({ login: member.login })
     try {
-      bar.tick({ login: member.login })
-      member.repositories = await getMemberRepositories(member.login)
+      repositories = await getMemberRepositories(member.login)
     } catch (e) {
-      console.log('Error while fetching repositories', e)
-      member.repositories = []
       membersInError.push(member.login)
+      continue
     }
 
-    for(repository of member.repositories) {
+    for(repository of repositories) {
       await sleep(25)
       try {
         repository.contributors = await getRepositoryContributors(repository.owner.login, repository.name)
       } catch(e) {
-        console.log('member', member)
-        console.log('repository', repository)
-        console.log('Error while fetching contributors', e)
-        repository.contributors = []
+        membersInError.push(member.login)
+        break
       }
     }
+
+    fs.writeFileSync(path.join(__dirname, rootDir, `${member.login}.json`), JSON.stringify(
+      { ...member, repositories },
+      undefined,
+      2,
+    ))
   }
 
-  fs.writeFileSync(path.join(__dirname, 'members.json'), JSON.stringify(members, undefined, 2))
-  console.log('Members in error', JSON.stringify(membersInError, undefined, 2))
+  if (membersInError.length) {
+    console.error(`Oups, something went wrong for some members. Please refer to ${path.join(__dirname, rootDir, 'membersInError.json')}`)
+    fs.writeFileSync(path.join(__dirname, rootDir, 'membersInError.json'), JSON.stringify(membersInError, undefined, 2))
+  }
 
-  const organization = await getOrganizationRepositories(githubOrganization)
-  fs.writeFileSync(path.join(__dirname, 'organization.json'), JSON.stringify(organization, undefined, 2))
+  let organization = []
+  try {
+    organization = await getOrganizationRepositories(githubOrganization)
+  } catch(e) {
+    console.error(`Can't retrieve organization data`)
+  }
+
+  fs.writeFileSync(path.join(__dirname, rootDir, 'organization.json'), JSON.stringify(organization, undefined, 2))
 
   async function getRateLimit() {
     const response = await client

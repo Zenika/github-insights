@@ -5,7 +5,11 @@
   const chalk = require('chalk')
 
   const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
-  const members = JSON.parse(fs.readFileSync(path.join(__dirname, 'members.json')))
+  const dataFolder = 'data'
+  const members = fs.readdirSync(path.join(__dirname, dataFolder))
+    .filter(file => !['members.json', 'organization.json'].includes(file))
+    .map(file => JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, file))))
+
   const membersWithRepositories = members.filter(member => member.repositories.length > 0)
   const repositoriesOwnedByMembers = membersWithRepositories
     .map(member => {
@@ -41,7 +45,7 @@
   
   const topPrimaryLanguages = primaryLanguages.slice(0, 10)
 
-  const organizationRepositories = JSON.parse(fs.readFileSync(path.join(__dirname, 'organization.json')))
+  const organizationRepositories = JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, 'organization.json')))
   const topPrimaryLanguagesInOrganization = organizationRepositories
     .flatMap(repository => repository.primaryLanguage)
     .filter(primaryLanguage => primaryLanguage !== null)
