@@ -4,7 +4,7 @@
   const path = require('path')
   const chalk = require('chalk')
 
-  const githubOrganization = process.argv[2]
+  const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
   const members = JSON.parse(fs.readFileSync(path.join(__dirname, 'members.json')))
   const membersWithRepositories = members.filter(member => member.repositories.length > 0)
   const repositoriesOwnedByMembers = membersWithRepositories
