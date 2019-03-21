@@ -1,3 +1,5 @@
+var nodemailer = require('nodemailer');
+
 (async function() {
   const config = require('dotenv').config()
   const httpie = require('httpie')
@@ -75,6 +77,8 @@
 
   const organization = await getOrganizationRepositories(githubOrganization)
   fs.writeFileSync(path.join(__dirname, 'organization.json'), JSON.stringify(organization, undefined, 2))
+
+  sendMailWhenFinish(54486, 'jls.lebris@gmail.com')
 
   async function getRateLimit() {
     const response = await client
@@ -198,3 +202,29 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 })()
+
+
+function sendMailWhenFinish(idDemande, emailDemande){
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'jls.lebris@gmail.com',
+    pass: 'dkkgvbejgoecqyjv'
+  }
+});
+
+var mailOptions = {
+  from: 'jls.lebris@gmail.com',
+  to: emailDemande,
+  subject: 'Sending Email using Node.js',
+  text: 'demande completé ! Vous pouvez voir le resultat à cette adresse : '+idDemande
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+}
