@@ -63,5 +63,4 @@ typings/
 CHANGELOG.json
 .vscode
 
-members.json
-organization.json
+data
