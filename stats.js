@@ -4,7 +4,7 @@
   const path = require('path')
   const chalk = require('chalk')
 
-  const githubOrganization = process.env.GITHUB_ORGA
+  const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
   const dataFolder = 'data'
   const members = fs.readdirSync(path.join(__dirname, dataFolder))
     .filter(file => !['members.json', 'organization.json'].includes(file))
