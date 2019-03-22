@@ -36,4 +36,4 @@ The following command allows you to get insights from the information
 yarn stats <organization_name>
 ```
 
-You can add the organisazation name in the .env file. In this case use the key `GITHUB_ORGA`. If the both chose are set the env variable will be taken.
+You can add the organisazation name in the .env file. In this case use the key `GITHUB_ORGA`. If both choses are set the env variable will be taken.
