@@ -24,16 +24,22 @@ You have to create a token with the `read:org` access.
 
 # Usage
 
-The following command allows you to get information on your organization
+The following command allows you to get information on your organization. The generated files may be found in the `data` folder.
 
 ```
 yarn start <organization_name>
 ```
 
-The following command allows you to get insights from the information
+The following command allows you to get insights from your organization's information.
 
 ```
-yarn stats <organization_name>
+yarn stats
+```
+
+You may also run the following command to generate a `stats.json` file containing the same insights:
+
+```
+yarn stats:file
 ```
 
 You can add the organisazation name in the .env file. In this case use the key `GITHUB_ORGA`. If both choices are set the env variable will be taken.
