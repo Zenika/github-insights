@@ -6,8 +6,9 @@
 
   const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
   const dataFolder = 'data'
+  const statsFile = 'stats.json'
   const members = fs.readdirSync(path.join(__dirname, dataFolder))
-    .filter(file => !['members.json', 'organization.json'].includes(file))
+    .filter(file => !['members.json', 'organization.json', 'stats.json'].includes(file))
     .map(file => JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, file))))
 
   const membersWithRepositories = members.filter(member => member.repositories.length > 0)
@@ -42,7 +43,7 @@
     }, [])
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
-  
+
   const topPrimaryLanguages = primaryLanguages.slice(0, 10)
 
   const organizationRepositories = JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, 'organization.json')))
@@ -70,6 +71,18 @@
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
 
+  const stats = {
+    organization: githubOrganization,
+    totalMembers: members.length,
+    membersWithRepositories: membersWithRepositories.length,
+    topPrimaryLanguages: topPrimaryLanguagesInOrganization.map(([language, count]) => ({ language, count })),
+    topRepositories: stargazersForOrganization.map(([repo, count]) => ({ repo, count })),
+    totalRepositories: repositories.length,
+    topLanguages: topPrimaryLanguages.map(([language, count]) => ({ language, count })),
+    topMemberRepositories: stargazersForMembersOwnedRepositories.map(([repo, count]) => ({ repo, count }))
+  }
+  fs.writeFileSync(path.join(__dirname, dataFolder, statsFile), JSON.stringify(stats, undefined, 2))
+
   console.log(chalk`
   {bold.red.bgWhite ${githubOrganization}}
   Members: {blue ${members.length}}
@@ -80,6 +93,7 @@
   ${githubOrganization} members repositories: {blue ${repositories.length}}
   Top languages:\r\n{blue ${topPrimaryLanguages.map(([language, count]) => `\t- ${language}: ${count}`).join('\r\n')}}
   Top ${githubOrganization} members repositories:\r\n{blue ${stargazersForMembersOwnedRepositories.map(([repo, count]) => `\t- ${repo}: ${count} ⭐️`).join('\r\n')}}
+  {green A stats file has been generated in /data/stats.json 📄}
   `)
 
 })()
