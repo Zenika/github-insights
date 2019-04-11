@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development node index.js",
-    "stats": "NODE_ENV=development node stats.js"
+    "stats": "NODE_ENV=development node stats.js",
+    "stats:file": "NODE_ENV=development node stats.js generateFile=true"
   },
   "license": "MIT",
   "dependencies": {
