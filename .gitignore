@@ -64,3 +64,4 @@ CHANGELOG.json
 .vscode
 
 data
+.DS_Store
