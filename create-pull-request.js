@@ -9,41 +9,37 @@ const client = new Octokit({
   previews: ['shadow-cat'],
 })
 
-const commonPayload = {
+const COMMON_PAYLOAD = {
   owner: process.env.GITHUB_ORGA,
   repo: process.env.GITHUB_WEBSITE,
 }
 
 const branch = `insights-${getDate()}`
 
-createBranchFromMaster(client, commonPayload, branch)
+createBranchFromMaster(client, branch)
   .then(() => readFile('data/stats.json', 'base64'))
   .then(content => updateFile(
     client,
-    commonPayload,
     'src/data/stats.json',
     content,
     branch,
   ))
-  .then(() => createPullRequest(client, {
-    ...commonPayload,
-    head: branch,
-    title: `:card_file_box: Update stats.json ${getDate()}`,
-  }))
+  .then(({ data }) => data.commit.message)
+  .then(title => createPullRequest(client, branch, title))
   .catch(error => {
     console.error(error)
     process.exit(1)
   })
 
-function createBranchFromMaster(client, payload, branch) {
+function createBranchFromMaster(client, branch) {
   return client.repos.getBranch({
-    ...payload,
+    ...COMMON_PAYLOAD,
     branch: 'master',
   })
   .then(branch => branch.data.commit.sha)
   .then(sha => {
     return client.git.createRef({
-      ...payload,
+      ...COMMON_PAYLOAD,
       ref: `refs/heads/${branch}`,
       sha,
     })
@@ -53,9 +49,9 @@ function createBranchFromMaster(client, payload, branch) {
   })
 }
 
-function updateFile(client, payload, path, content, branch, date = getDate()) {
+function updateFile(client, path, content, branch, date = getDate()) {
   return client.repos.getContents({
-    ...payload,
+    ...COMMON_PAYLOAD,
     path,
     ref: branch,
   })
@@ -64,7 +60,7 @@ function updateFile(client, payload, path, content, branch, date = getDate()) {
     const message = `:card_file_box: Update ${name} ${date}`
 
     return client.repos.createOrUpdateFile({
-      ...payload,
+      ...COMMON_PAYLOAD,
       branch,
       path,
       message,
@@ -74,11 +70,13 @@ function updateFile(client, payload, path, content, branch, date = getDate()) {
   })
 }
 
-function createPullRequest(client, payload) {
+function createPullRequest(client, head, title) {
   return client.pulls.create({
-    ...payload,
+    ...COMMON_PAYLOAD,
     base: 'master',
     draft: true,
+    head,
+    title,
   })
 }
 
