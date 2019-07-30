@@ -56,7 +56,7 @@
     })
 
     for(let file of files) {
-      if (file.includes('organization.json')) continue
+      if (['members.json', 'organization.json', 'stats.json'].includes(file)) continue
 
       const member = JSON.parse(fs.readFileSync(file).toString('utf8'))
       bar.tick({ login: member.login })
