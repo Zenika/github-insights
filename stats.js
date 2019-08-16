@@ -108,7 +108,7 @@
         member.contributionsCollection.totalRepositoryContributions
     }))
     .sort((a, b) => b.totalContributions - a.totalContributions)
-    .slice(1, 11)
+    .slice(0, 10)
 
   stats.totalContributions = members
     .map(member => member.contributionsCollection.totalIssueContributions +
