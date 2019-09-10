@@ -10,7 +10,7 @@
   const githubId = process.env.GITHUB_ID
   const githubToken = process.env.GITHUB_OAUTH
 
-  const rootDir = 'data'
+  const rootDir = '../data'
   const membersInError = []
 
   const client = new ApolloClient({
@@ -47,7 +47,7 @@
       `
   }
 
-  glob('./data/*.json', async function(err, files) {
+  glob(path.join(__dirname, '..', '/data/*.json'), async function(err, files) {
     const bar = new ProgressBar('downloading [:bar] :login (:percent)', {
       complete: '=',
       incomplete: ' ',
