@@ -19,6 +19,7 @@ GITHUB_ID=<github_id>
 GITHUB_OAUTH=<oauth to access the API>
 GITHUB_ORGA=<name of the organization>
 GITHUB_WEBSITE=<repository name of the website>
+GITHUB_WEBSITE_ORGA=<name of the website orga>
 ```
 
 If you do not know how to get the `GITHUB_OAUTH`, please see this [page](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
