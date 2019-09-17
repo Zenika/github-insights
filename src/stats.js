@@ -4,7 +4,7 @@
   const path = require('path')
   const chalk = require('chalk')
 
-  const dataFolder = 'data'
+  const dataFolder = '../data'
   const statsFile = 'stats.json'
   const generateFile = !!process.argv[2]
   const stats = {}

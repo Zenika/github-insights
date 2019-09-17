@@ -1,24 +1,23 @@
 {
   "name": "github-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "NODE_ENV=development node index.js",
-    "stats": "NODE_ENV=development node stats.js",
-    "stats:file": "NODE_ENV=development node stats.js file"
+    "start": "NODE_ENV=development node src/index.js",
+    "stats": "NODE_ENV=development node src/stats.js",
+    "stats:file": "NODE_ENV=development node src/stats.js file"
   },
   "license": "MIT",
   "dependencies": {
-    "@octokit/rest": "^16.28.5",
-    "apollo-boost": "^0.1.27",
-    "apollo-link-http": "^1.5.9",
+    "@octokit/rest": "^16.28.9",
+    "apollo-boost": "^0.4.4",
+    "apollo-link-http": "^1.5.16",
     "chalk": "^2.4.2",
-    "dotenv": "^6.2.0",
+    "dotenv": "^8.1.0",
     "glob": "^7.1.4",
-    "graphql": "^14.1.1",
+    "graphql": "^14.5.6",
     "graphql-tag": "^2.10.1",
-    "httpie": "^1.1.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "progress": "^2.0.3"
   }
 }
