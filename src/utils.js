@@ -4,6 +4,7 @@ const path = require('path')
 
 const existsAsync = promisify(fs.exists)
 const mkdirAsync = promisify(fs.mkdir)
+const writeFileAsync = promisify(fs.writeFile)
 
 const rootDir = '../data'
 
@@ -21,18 +22,18 @@ async function createDataFolder() {
   if (!alreadyExists) return mkdirAsync(folderPath)
 }
 
-function writeMember(member) {
-  fs.writeFileSync(path.join(__dirname, rootDir, `${member.login}.json`), prettyJson(member))
+async function writeMember(member) {
+  await writeFileAsync(path.join(__dirname, rootDir, `${member.login}.json`), prettyJson(member))
   return member
 }
 
-function writeMembers(members) {
-  fs.writeFileSync(path.join(__dirname, rootDir, 'members.json'), prettyJson(members))
+async function writeMembers(members) {
+  await writeFileAsync(path.join(__dirname, rootDir, 'members.json'), prettyJson(members))
   return members
 }
 
-function writeOrganization(organization) {
-  fs.writeFileSync(path.join(__dirname, rootDir, 'organization.json'), prettyJson(organization))
+async function writeOrganization(organization) {
+  await writeFileAsync(path.join(__dirname, rootDir, 'organization.json'), prettyJson(organization))
   return organization
 }
 

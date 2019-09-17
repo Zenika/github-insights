@@ -91,7 +91,7 @@ const GET_REPOSITORIES_BY_USER_QUERY = gql`
 `
 
 async function getRepositoriesByUser(login) {
-  let result = []
+  const result = []
   let pageInfo = {}
 
   do {
@@ -142,7 +142,7 @@ const GET_REPOSITORIES_BY_ORGANIZATION_QUERY = gql`
 `
 
 async function getRepositoriesByOrganization(login) {
-  let result = []
+  const result = []
   let pageInfo = {}
 
   do {
@@ -183,7 +183,7 @@ const GET_MEMBERS_BY_ORGANISATION_QUERY = gql`
 `
 
 async function getMembersByOrganization(organization) {
-  let result = []
+  const result = []
   let pageInfo = {}
   
   do {
@@ -198,7 +198,7 @@ async function getMembersByOrganization(organization) {
       })
 
     const membersWithRole = response.data.organization.membersWithRole
-    result = [...result, ...membersWithRole.nodes]
+    result.push(...membersWithRole.nodes)
 
     pageInfo = membersWithRole.pageInfo
   } while (pageInfo.hasNextPage)

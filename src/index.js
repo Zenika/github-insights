@@ -43,7 +43,7 @@
       repository.contributors = contributors.map(({ weeks, ...contributor }) => contributor)
     }
 
-    writeMember({ ...member, repositories, contributionsCollection  })
+    await writeMember({ ...member, repositories, contributionsCollection  })
   }
 
   getRepositoriesByOrganization(githubOrganization).then(writeOrganization)
