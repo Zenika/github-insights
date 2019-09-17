@@ -106,7 +106,7 @@ async function getRepositoriesByLogin(login, field) {
         },
       })
   
-    result = [...result, ...response.data[field].repositories.nodes]
+    result.push(...response.data[field].repositories.nodes)
 
     pageInfo = response.data[field].repositories.pageInfo
   } while(pageInfo.hasNextPage)

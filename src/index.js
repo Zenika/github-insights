@@ -18,7 +18,7 @@
   createDataFolder()
 
   let members
-  members = await getMembersByOrganization(githubOrganization)
+  members = await getMembersByOrganization(githubOrganization).then(writeMembers)
   writeMembers(members)
   console.log(`Numbers of members: ${members.length}`)
 
