@@ -5,7 +5,8 @@
   const {
     getRateLimit,
     getRepositoryContributors,
-    getRepositoriesByLogin,
+    getRepositoriesByUser,
+    getRepositoriesByOrganization,
     getMembersByOrganization,
     getUserContributions,
   } = require('./queries.js')
@@ -15,11 +16,9 @@
   const githubToken = process.env.GITHUB_OAUTH
   const githubOrganization = process.argv[2] || process.env.GITHUB_ORGA
 
-  createDataFolder()
+  await createDataFolder()
 
-  let members
-  members = await getMembersByOrganization(githubOrganization).then(writeMembers)
-  writeMembers(members)
+  const members = await getMembersByOrganization(githubOrganization).then(writeMembers)
   console.log(`Numbers of members: ${members.length}`)
 
   const bar = new ProgressBar('downloading [:bar] :login (:percent)', {
@@ -34,19 +33,18 @@
     const contributionsCollection = await getUserContributions(member.login)
 
     await sleep(25)
-    let repositories = []
     bar.tick({ login: member.login })
 
-    repositories = await getRepositoriesByLogin(member.login, 'user')
+    const repositories = await getRepositoriesByUser(member.login)
 
     for(repository of repositories) {
       await sleep(25)
       const contributors = await getRepositoryContributors(repository.owner.login, repository.name)
-      repository.contributors = !contributors ? [] : contributors.map(({ weeks, ...contributor }) => contributor)
+      repository.contributors = contributors.map(({ weeks, ...contributor }) => contributor)
     }
 
     writeMember({ ...member, repositories, contributionsCollection  })
   }
 
-getRepositoriesByLogin(githubOrganization, 'organization').then(writeOrganization)
+  getRepositoriesByOrganization(githubOrganization).then(writeOrganization)
 })()

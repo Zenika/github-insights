@@ -8,7 +8,6 @@ module.exports = new ApolloClient({
   uri: `https://api.github.com/graphql?access_token=${githubToken}`,
   fetch: async (uri, options) => {
     const { method } = options
-    options.family = 4
     options.headers = {
       ...options.headers,
       'User-Agent': githubId

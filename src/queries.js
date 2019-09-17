@@ -27,12 +27,11 @@ async function getRateLimit() {
 
 async function getRepositoryContributors(owner, repository) {
   try {
-    const res = await httpie.send(
-      'GET',
+    const res = await httpie.get(
       `https://api.github.com/repos/${owner}/${repository}/stats/contributors?access_token=${githubToken}`,
       { headers: { 'User-Agent': githubId } }
     )
-    return res.data
+    return res.data || []
   } catch(e) {
     console.log(e)
     process.exit(0)
@@ -64,9 +63,9 @@ async function getUserContributions(login) {
   return response.data.user.contributionsCollection
 }
 
-const makeGetRepositoryQuery = field => gql`
-  query getRepositories($login: String!, $cursor: String) {
-    ${field}(login: $login) {
+const GET_REPOSITORIES_BY_USER_QUERY = gql`
+  query getRepositoriesByUser($login: String!, $cursor: String) {
+    user(login: $login) {
       repositories(first: 100, after: $cursor, isFork: false, isLocked: false) {
         nodes {
           name
@@ -91,7 +90,7 @@ const makeGetRepositoryQuery = field => gql`
   }
 `
 
-async function getRepositoriesByLogin(login, field) {
+async function getRepositoriesByUser(login) {
   let result = []
   let pageInfo = {}
 
@@ -99,16 +98,68 @@ async function getRepositoriesByLogin(login, field) {
     sleep(25)
     const response = await client
       .query({
-        query: makeGetRepositoryQuery(field),
+        query: GET_REPOSITORIES_BY_USER_QUERY,
         variables: {
           login,
           cursor: pageInfo.endCursor,
         },
       })
   
-    result.push(...response.data[field].repositories.nodes)
+    const repositories = response.data.user.repositories
+    result.push(...repositories.nodes)
 
-    pageInfo = response.data[field].repositories.pageInfo
+    pageInfo = repositories.pageInfo
+  } while(pageInfo.hasNextPage)
+
+  return result
+}
+
+const GET_REPOSITORIES_BY_ORGANIZATION_QUERY = gql`
+  query getRepositoriesByOrganization($login: String!, $cursor: String) {
+    organization(login: $login) {
+      repositories(first: 100, after: $cursor, isFork: false, isLocked: false) {
+        nodes {
+          name
+          description
+          url
+          primaryLanguage {
+            name
+          }
+          stargazers {
+            totalCount
+          }
+          owner {
+            login
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+`
+
+async function getRepositoriesByOrganization(login) {
+  let result = []
+  let pageInfo = {}
+
+  do {
+    sleep(25)
+    const response = await client
+      .query({
+        query: GET_REPOSITORIES_BY_ORGANIZATION_QUERY,
+        variables: {
+          login,
+          cursor: pageInfo.endCursor,
+        },
+      })
+  
+    const repositories = response.data.organization.repositories
+    result.push(...repositories.nodes)
+
+    pageInfo = repositories.pageInfo
   } while(pageInfo.hasNextPage)
 
   return result
@@ -146,9 +197,10 @@ async function getMembersByOrganization(organization) {
         }
       })
 
-    result = [...result, ...response.data.organization.membersWithRole.nodes]
+    const membersWithRole = response.data.organization.membersWithRole
+    result = [...result, ...membersWithRole.nodes]
 
-    pageInfo = response.data.organization.membersWithRole.pageInfo
+    pageInfo = membersWithRole.pageInfo
   } while (pageInfo.hasNextPage)
 
   return result
@@ -157,7 +209,8 @@ async function getMembersByOrganization(organization) {
 module.exports = {
   getRateLimit,
   getRepositoryContributors,
-  getRepositoriesByLogin,
+  getRepositoriesByUser,
+  getRepositoriesByOrganization,
   getMembersByOrganization,
   getUserContributions,
 }
