@@ -10,7 +10,7 @@ const client = new Octokit({
 })
 
 const COMMON_PAYLOAD = {
-  owner: process.env.GITHUB_ORGA,
+  owner: process.env.GITHUB_WEBSITE_ORGA,
   repo: process.env.GITHUB_WEBSITE,
 }
 
