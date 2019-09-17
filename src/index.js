@@ -109,7 +109,7 @@
     let membersEdges = []
 
     do {
-      const membersCursor = membersEdges.length ? membersEdges[membersEdges.length - 1].cursor : ''
+      const membersCursor = membersEdges.length ? membersEdges[membersEdges.length - 1].cursor : null
       await sleep(25)
       const response = await getMembersByOrganization(githubOrganization, membersCursor)
 

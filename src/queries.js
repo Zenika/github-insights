@@ -77,9 +77,9 @@ async function getMembersByOrganization(organization, cursor) {
   const response = await client
     .query({
       query: gql`
-        {
-          organization(login: "${organization}") {
-            membersWithRole(first: 100${cursor !== '' ? `, after: "${cursor}"` : ''}) {
+        query getMembersByOrganization($organization: String!, $cursor: String) {
+          organization(login: $organization) {
+            membersWithRole(first: 100, after: $cursor) {
               edges {
                 node {
                   login
@@ -90,7 +90,11 @@ async function getMembersByOrganization(organization, cursor) {
             }
           }
         }
-      `
+      `,
+      variables: {
+        cursor,
+        organization,
+      }
     })
   return response
 }
