@@ -48,5 +48,5 @@
     writeMember({ ...member, repositories, contributionsCollection  })
   }
 
-  writeOrganization(await getRepositoriesByLogin(githubOrganization, 'organization'))
+getRepositoriesByLogin(githubOrganization, 'organization').then(writeOrganization)
 })()
