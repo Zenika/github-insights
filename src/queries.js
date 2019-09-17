@@ -39,6 +39,31 @@ async function getRepositoryContributors(owner, repository) {
   }
 }
 
+const GET_USER_CONTRIBUTONS_QUERY = gql`
+  query getUserContributions($login: String!){
+    user(login: $login) { 
+      contributionsCollection {
+        totalIssueContributions
+        totalCommitContributions
+        totalPullRequestContributions
+        totalPullRequestReviewContributions
+        totalRepositoryContributions
+      }
+    }
+  }
+`
+
+async function getUserContributions(login) {
+  const response = await client
+    .query({
+      query: GET_USER_CONTRIBUTONS_QUERY,
+      variables: {
+        login,
+      },
+    })
+  return response.data.user.contributionsCollection
+}
+
 const makeGetRepositoryQuery = field => gql`
   query getRepositories($login: String!, $cursor: String) {
     ${field}(login: $login) {
@@ -134,4 +159,5 @@ module.exports = {
   getRepositoryContributors,
   getRepositoriesByLogin,
   getMembersByOrganization,
+  getUserContributions,
 }

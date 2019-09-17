@@ -1,11 +1,14 @@
 (async function() {
-  const config = require('dotenv').config()
-  const fs = require('fs')
-  const path = require('path')
+  require('dotenv').config()
   const ProgressBar = require('progress')
 
-  const { getRateLimit, getRepositoryContributors, getRepositoriesByLogin, getMembersByOrganization } = require('./queries.js')
-  const client = require('./graphql.js')
+  const {
+    getRateLimit,
+    getRepositoryContributors,
+    getRepositoriesByLogin,
+    getMembersByOrganization,
+    getUserContributions,
+  } = require('./queries.js')
   const { sleep, createDataFolder, writeMember, writeMembers, writeOrganization } = require('./utils')
 
   const githubId = process.env.GITHUB_ID
@@ -15,13 +18,8 @@
   createDataFolder()
 
   let members
-  try {
-    members = await getMembersByOrganization(githubOrganization)
-    writeMembers(members)
-  } catch(e) {
-    console.error('Error while fetching members', JSON.stringify(e, undefined, 2))
-    process.exit(0)
-  }
+  members = await getMembersByOrganization(githubOrganization)
+  writeMembers(members)
   console.log(`Numbers of members: ${members.length}`)
 
   const bar = new ProgressBar('downloading [:bar] :login (:percent)', {
@@ -33,35 +31,22 @@
 
   for (member of members) {
     await sleep(25)
+    const contributionsCollection = await getUserContributions(member.login)
+
+    await sleep(25)
     let repositories = []
     bar.tick({ login: member.login })
-    try {
-      repositories = await getRepositoriesByLogin(member.login, 'user')
-    } catch (e) {
-      console.error(e)
-      continue
-    }
+
+    repositories = await getRepositoriesByLogin(member.login, 'user')
 
     for(repository of repositories) {
       await sleep(25)
-      try {
-        repository.contributors = await getRepositoryContributors(repository.owner.login, repository.name)
-      } catch(e) {
-        console.error(e)
-        membersInError.push(member.login)
-        break
-      }
+      const contributors = await getRepositoryContributors(repository.owner.login, repository.name)
+      repository.contributors = !contributors ? [] : contributors.map(({ weeks, ...contributor }) => contributor)
     }
 
-    writeMember({ ...member, repositories })
+    writeMember({ ...member, repositories, contributionsCollection  })
   }
 
-  let organization = []
-  try {
-    organization = await getRepositoriesByLogin(githubOrganization, 'organization')
-  } catch(e) {
-    console.error(`Can't retrieve organization data`)
-  }
-
-  writeOrganization(organization)
+  writeOrganization(await getRepositoriesByLogin(githubOrganization, 'organization'))
 })()
