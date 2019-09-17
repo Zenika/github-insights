@@ -1,6 +1,8 @@
 const httpie = require('httpie')
 const { gql } = require('apollo-boost')
+
 const client = require('./graphql.js')
+const { sleep } = require('./utils.js')
 
 const githubId = process.env.GITHUB_ID
 const githubToken = process.env.GITHUB_OAUTH
@@ -41,22 +43,19 @@ const makeGetRepositoryQuery = field => gql`
   query getRepositories($login: String!, $cursor: String) {
     ${field}(login: $login) {
       repositories(first: 100, after: $cursor, isFork: false, isLocked: false) {
-        edges {
-          node {
+        nodes {
+          name
+          description
+          url
+          primaryLanguage {
             name
-            description
-            url
-            primaryLanguage {
-              name
-            }
-            stargazers {
-              totalCount
-            }
-            owner {
-              login
-            }
           }
-          cursor
+          stargazers {
+            totalCount
+          }
+          owner {
+            login
+          }
         }
         pageInfo {
           endCursor
@@ -67,49 +66,72 @@ const makeGetRepositoryQuery = field => gql`
   }
 `
 
-async function getRepositoriesByUser(login, cursor, field) {
-  const response = await client
-    .query({
-      query: makeGetRepositoryQuery(field),
-      variables: {
-        login,
-        cursor,
-      },
-    })
-  return response
+async function getRepositoriesByLogin(login, field) {
+  let result = []
+  let pageInfo = {}
+
+  do {
+    sleep(25)
+    const response = await client
+      .query({
+        query: makeGetRepositoryQuery(field),
+        variables: {
+          login,
+          cursor: pageInfo.endCursor,
+        },
+      })
+  
+    result = [...result, ...response.data[field].repositories.nodes]
+
+    pageInfo = response.data[field].repositories.pageInfo
+  } while(pageInfo.hasNextPage)
+
+  return result
 }
 
 const GET_MEMBERS_BY_ORGANISATION_QUERY = gql`
   query getMembersByOrganization($organization: String!, $cursor: String) {
     organization(login: $organization) {
       membersWithRole(first: 100, after: $cursor) {
-        edges {
-          node {
-            login
-            name
-          }
-          cursor
+        nodes {
+          login
+          name
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
         }
       }
     }
   }
 `
 
-async function getMembersByOrganization(organization, cursor) {
-  const response = await client
-    .query({
-      query: GET_MEMBERS_BY_ORGANISATION_QUERY,
-      variables: {
-        cursor,
-        organization,
-      }
-    })
-  return response
+async function getMembersByOrganization(organization) {
+  let result = []
+  let pageInfo = {}
+  
+  do {
+    sleep(25)
+    const response = await client
+      .query({
+        query: GET_MEMBERS_BY_ORGANISATION_QUERY,
+        variables: {
+          cursor: pageInfo.endCursor,
+          organization,
+        }
+      })
+
+    result = [...result, ...response.data.organization.membersWithRole.nodes]
+
+    pageInfo = response.data.organization.membersWithRole.pageInfo
+  } while (pageInfo.hasNextPage)
+
+  return result
 }
 
 module.exports = {
   getRateLimit,
   getRepositoryContributors,
-  getRepositoriesByUser,
+  getRepositoriesByLogin,
   getMembersByOrganization,
 }
