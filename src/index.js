@@ -1,50 +1,62 @@
-(async function() {
-  require('dotenv').config()
-  const ProgressBar = require('progress')
+require('dotenv').config()
+const ProgressBar = require('progress')
 
-  const {
-    getRateLimit,
-    getRepositoryContributors,
-    getRepositoriesByUser,
-    getRepositoriesByOrganization,
-    getMembersByOrganization,
-    getUserContributions,
-  } = require('./queries.js')
-  const { sleep, createDataFolder, writeMember, writeMembers, writeOrganization } = require('./utils')
+const {
+  generateOrganizationData,
+  MEMBERS_LOADED,
+  START_ENHANCING_MEMBER,
+  ENHANCING_MEMBER_DONE,
+  ORGANIZATION_LOADED,
+} = require('./core.js')
 
-  const githubId = process.env.GITHUB_ID
-  const githubToken = process.env.GITHUB_OAUTH
-  const githubOrganization = process.argv[2] || process.env.GITHUB_ORGA
+const { sleep, createDataFolder, writeMember, writeMembers, writeOrganization } = require('./utils')
 
-  await createDataFolder()
+require('yargs')
+  .command(
+    'generate',
+    'Generate a data folder with all data related to the organization passed as parameter',
+    {
+      organization: {
+        alias: 'o',
+        default: process.env.GITHUB_ORGA,
+      }
+    },
+    async function(argv) {
+      const githubOrganization = argv.organization
+      const githubId = process.env.GITHUB_ID
+      const githubToken = process.env.GITHUB_OAUTH
 
-  const members = await getMembersByOrganization(githubOrganization).then(writeMembers)
-  console.log(`Numbers of members: ${members.length}`)
+      await createDataFolder()
 
-  const bar = new ProgressBar('downloading [:bar] :login (:percent)', {
-    complete: '=',
-    incomplete: ' ',
-    width: 50,
-    total: members.length
-  })
+      let bar 
+      const generator = generateOrganizationData(githubOrganization)
 
-  for (member of members) {
-    await sleep(25)
-    const contributionsCollection = await getUserContributions(member.login)
-
-    await sleep(25)
-    bar.tick({ login: member.login })
-
-    const repositories = await getRepositoriesByUser(member.login)
-
-    for(repository of repositories) {
-      await sleep(25)
-      const contributors = await getRepositoryContributors(repository.owner.login, repository.name)
-      repository.contributors = contributors.map(({ weeks, ...contributor }) => contributor)
+      for await (const event of generator) {
+        switch(event.type) {
+          case MEMBERS_LOADED:
+            const members = event.value
+            writeMembers(members)
+            console.log(`Numbers of members: ${members.length}`)
+            bar = new ProgressBar('downloading [:bar] :login (:percent)', {
+              complete: '=',
+              incomplete: ' ',
+              width: 50,
+              total: members.length,
+            })
+            break
+          case START_ENHANCING_MEMBER:
+            bar.tick({ login: event.value })
+            break
+          case ENHANCING_MEMBER_DONE: 
+            writeMember(event.value)
+            break
+          case ORGANIZATION_LOADED:
+            writeOrganization(event.value)
+            break
+        }
+      }
     }
+  )
+  .help()
+  .argv
 
-    await writeMember({ ...member, repositories, contributionsCollection  })
-  }
-
-  getRepositoriesByOrganization(githubOrganization).then(writeOrganization)
-})()
