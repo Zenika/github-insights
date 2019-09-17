@@ -37,60 +37,68 @@ async function getRepositoryContributors(owner, repository) {
   }
 }
 
+const makeGetRepositoryQuery = field => gql`
+  query getRepositories($login: String!, $cursor: String) {
+    ${field}(login: $login) {
+      repositories(first: 100, after: $cursor, isFork: false, isLocked: false) {
+        edges {
+          node {
+            name
+            description
+            url
+            primaryLanguage {
+              name
+            }
+            stargazers {
+              totalCount
+            }
+            owner {
+              login
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+`
+
 async function getRepositoriesByUser(login, cursor, field) {
   const response = await client
     .query({
-      query: gql`
-        {
-          ${field}(login: "${login}") {
-            repositories(first: 100${cursor !== '' ? `, after: "${cursor}"` : ''}, isFork: false, isLocked: false) {
-              edges {
-                node {
-                  name
-                  description
-                  url
-                  primaryLanguage {
-                    name
-                  }
-                  stargazers {
-                    totalCount
-                  }
-                  owner {
-                    login
-                  }
-                }
-                cursor
-              }
-              pageInfo {
-                endCursor
-                hasNextPage
-              }
-            }
-          }
-        }
-      `
+      query: makeGetRepositoryQuery(field),
+      variables: {
+        login,
+        cursor,
+      },
     })
   return response
 }
 
+const GET_MEMBERS_BY_ORGANISATION_QUERY = gql`
+  query getMembersByOrganization($organization: String!, $cursor: String) {
+    organization(login: $organization) {
+      membersWithRole(first: 100, after: $cursor) {
+        edges {
+          node {
+            login
+            name
+          }
+          cursor
+        }
+      }
+    }
+  }
+`
+
 async function getMembersByOrganization(organization, cursor) {
   const response = await client
     .query({
-      query: gql`
-        query getMembersByOrganization($organization: String!, $cursor: String) {
-          organization(login: $organization) {
-            membersWithRole(first: 100, after: $cursor) {
-              edges {
-                node {
-                  login
-                  name
-                }
-                cursor
-              }
-            }
-          }
-        }
-      `,
+      query: GET_MEMBERS_BY_ORGANISATION_QUERY,
       variables: {
         cursor,
         organization,

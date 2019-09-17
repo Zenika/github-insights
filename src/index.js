@@ -46,6 +46,7 @@
     try {
       repositories = await getMemberRepositories(member.login)
     } catch (e) {
+      console.error(e)
       membersInError.push(member.login)
       continue
     }
@@ -55,6 +56,7 @@
       try {
         repository.contributors = await getRepositoryContributors(repository.owner.login, repository.name)
       } catch(e) {
+        console.error(e)
         membersInError.push(member.login)
         break
       }
@@ -87,7 +89,7 @@
       let repositoriesEdges = []
 
       do {
-        const repositoriesCursor = repositoriesEdges.length ? repositoriesEdges[repositoriesEdges.length - 1].cursor : ''
+        const repositoriesCursor = repositoriesEdges.length ? repositoriesEdges[repositoriesEdges.length - 1].cursor : null
 
         await sleep(25)
 
