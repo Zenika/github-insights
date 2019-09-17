@@ -9,7 +9,7 @@
 
   const githubId = process.env.GITHUB_ID
   const githubToken = process.env.GITHUB_OAUTH
-  const githubOrganization = process.env.GITHUB_ORGA || process.argv[2]
+  const githubOrganization = process.argv[2] || process.env.GITHUB_ORGA
   const rootDir = '../data'
 
   if (!fs.existsSync(path.join(__dirname, rootDir))) {
