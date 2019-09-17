@@ -1,4 +1,4 @@
-const httpie = require('httpie')
+const fetch = require('node-fetch')
 const { gql } = require('apollo-boost')
 
 const client = require('./graphql.js')
@@ -27,7 +27,7 @@ async function getRateLimit() {
 
 async function getRepositoryContributors(owner, repository) {
   try {
-    const res = await httpie.get(
+    const res = await fetch(
       `https://api.github.com/repos/${owner}/${repository}/stats/contributors?access_token=${githubToken}`,
       { headers: { 'User-Agent': githubId } }
     )
