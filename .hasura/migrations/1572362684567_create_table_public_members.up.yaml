@@ -1,0 +1,10 @@
+- args:
+    sql: CREATE TABLE "public"."members"("organization_login" text NOT NULL, "login"
+      text NOT NULL, "member_since" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY
+      ("login") , FOREIGN KEY ("organization_login") REFERENCES "public"."organizations"("login")
+      ON UPDATE cascade ON DELETE restrict);
+  type: run_sql
+- args:
+    name: members
+    schema: public
+  type: add_existing_table_or_view

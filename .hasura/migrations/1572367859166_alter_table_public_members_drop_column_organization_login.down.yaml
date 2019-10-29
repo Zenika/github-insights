@@ -1,0 +1,12 @@
+- args:
+    sql: ALTER TABLE "public"."members" ADD COLUMN "organization_login" text
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."members" ALTER COLUMN "organization_login" DROP NOT
+      NULL
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."members" ADD CONSTRAINT members_organization_login_fkey
+      FOREIGN KEY (organization_login) REFERENCES "public"."organizations" (login)
+      ON DELETE restrict ON UPDATE cascade
+  type: run_sql
