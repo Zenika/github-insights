@@ -1,0 +1,4 @@
+- args:
+    sql: "\n          alter table \"public\".\"repositories\" drop constraint \"repositories_owner_login_fkey\"\n
+      \     "
+  type: run_sql

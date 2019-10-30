@@ -1,0 +1,4 @@
+- args:
+    sql: alter table "public"."member_contribution_stats" add constraint "member_contribution_stats_member_id_key"
+      unique ("member_id");
+  type: run_sql

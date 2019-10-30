@@ -1,0 +1,18 @@
+- args:
+    permission:
+      allow_upsert: true
+      check: {}
+      columns:
+      - contribution_count
+      - login
+      - member_id
+      - repository_id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository_contributor
+      schema: public
+  type: create_insert_permission

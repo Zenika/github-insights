@@ -1,0 +1,3 @@
+- args:
+    sql: COMMENT ON TABLE "public"."owner" IS NULL
+  type: run_sql

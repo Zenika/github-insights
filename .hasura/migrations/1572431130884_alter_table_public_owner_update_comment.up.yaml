@@ -1,0 +1,4 @@
+- args:
+    sql: COMMENT ON TABLE "public"."owner" IS E'Any GitHub entity that can own a repository,
+      namely users and organizations.'
+  type: run_sql
