@@ -4,7 +4,7 @@ const { default: ApolloClient, gql } = require('apollo-boost')
 const organizationName = process.env.GITHUB_ORGA
 
 if (!organizationName) {
-  console.log('please env var GITHUB_ORGA')
+  console.log('please set env var GITHUB_ORGA')
   process.exit(1)
 }
 
