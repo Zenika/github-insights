@@ -18,7 +18,13 @@ if (!organizationName) {
   process.exit(1)
 }
 
-const repositoryMapper = ({ name, url, stargazers, primaryLanguage }) => ({
+const repositoryMapper = ({
+  name,
+  url,
+  stargazers,
+  primaryLanguage,
+  contributors = []
+}) => ({
   name,
   stars: stargazers.totalCount,
   url,
@@ -31,6 +37,20 @@ const repositoryMapper = ({ name, url, stargazers, primaryLanguage }) => ({
       constraint: 'programming_language_pkey',
       update_columns: ['name']
     }
+  },
+  contributors: {
+    data: contributors.map(({ total, author }) => ({
+      owner: {
+        data: {
+          login: author.login
+        },
+        on_conflict: {
+          constraint: 'owners_pkey',
+          update_columns: ['login']
+        }
+      },
+      contribution_count: total
+    }))
   }
 })
 
