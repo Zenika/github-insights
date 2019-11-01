@@ -1,6 +1,13 @@
 const fetch = require('node-fetch')
 const { default: ApolloClient, gql } = require('apollo-boost')
 
+const organizationName = process.env.GITHUB_ORGA
+
+if (!organizationName) {
+  console.log('please env var GITHUB_ORGA')
+  process.exit(1)
+}
+
 const client = new ApolloClient({
   uri: process.env.HASURA_GRAPHQL_URL,
   headers: {
@@ -8,15 +15,6 @@ const client = new ApolloClient({
   },
   fetch
 })
-
-const organizationName = process.argv[2]
-
-if (!organizationName) {
-  console.log(
-    'please provide the name of the organization as an argument to this script'
-  )
-  process.exit(1)
-}
 
 const repositoryMapper = ({
   name,
