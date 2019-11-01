@@ -126,6 +126,7 @@ const GET_REPOSITORIES_BY_ORGANIZATION_QUERY = gql`
           description
           url
           primaryLanguage {
+            id
             name
           }
           stargazers {

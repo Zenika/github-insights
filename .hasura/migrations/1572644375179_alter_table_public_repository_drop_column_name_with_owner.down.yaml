@@ -1,0 +1,7 @@
+- args:
+    sql: ALTER TABLE "public"."repository" ADD COLUMN "name_with_owner" text
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."repository" ALTER COLUMN "name_with_owner" DROP NOT
+      NULL
+  type: run_sql
