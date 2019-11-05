@@ -30,7 +30,13 @@ async function getRepositoryContributors(owner, repository) {
       `https://api.github.com/repos/${owner}/${repository}/stats/contributors?access_token=${githubToken}`,
       { headers: { 'User-Agent': githubId } },
     )
-    return res.data || []
+    if (!res.ok) {
+      throw res
+    }
+    if (res.status === 204) {
+      return []
+    }
+    return res.json()
   } catch (e) {
     console.log(e)
     process.exit(0)
