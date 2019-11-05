@@ -7,9 +7,7 @@ const {
   getUserContributions,
 } = require('./queries.js')
 
-const {
-  sleep,
-} = require('./utils.js')
+const { sleep } = require('./utils.js')
 
 const MEMBERS_LOADED = 'MEMBERS_LOADED'
 const START_ENHANCING_MEMBER = 'START_ENHANCING_MEMBER'
@@ -29,13 +27,21 @@ async function* generateOrganizationData(githubOrganization) {
     await sleep(25)
     const repositories = await getRepositoriesByUser(member.login)
 
-    for(repository of repositories) {
+    for (repository of repositories) {
       await sleep(25)
-      const contributors = await getRepositoryContributors(repository.owner.login, repository.name)
-      repository.contributors = contributors.map(({ weeks, ...contributor }) => contributor)
+      const contributors = await getRepositoryContributors(
+        repository.owner.login,
+        repository.name,
+      )
+      repository.contributors = contributors.map(
+        ({ weeks, ...contributor }) => contributor,
+      )
     }
 
-    yield { type: ENHANCING_MEMBER_DONE, value: { ...member, repositories, contributionsCollection } }
+    yield {
+      type: ENHANCING_MEMBER_DONE,
+      value: { ...member, repositories, contributionsCollection },
+    }
   }
 
   const organization = await getRepositoriesByOrganization(githubOrganization)

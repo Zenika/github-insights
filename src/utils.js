@@ -9,7 +9,7 @@ const writeFileAsync = promisify(fs.writeFile)
 const rootDir = '../data'
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 function prettyJson(obj) {
@@ -23,17 +23,26 @@ async function createDataFolder() {
 }
 
 async function writeMember(member) {
-  await writeFileAsync(path.join(__dirname, rootDir, `${member.login}.json`), prettyJson(member))
+  await writeFileAsync(
+    path.join(__dirname, rootDir, `${member.login}.json`),
+    prettyJson(member),
+  )
   return member
 }
 
 async function writeMembers(members) {
-  await writeFileAsync(path.join(__dirname, rootDir, 'members.json'), prettyJson(members))
+  await writeFileAsync(
+    path.join(__dirname, rootDir, 'members.json'),
+    prettyJson(members),
+  )
   return members
 }
 
 async function writeOrganization(organization) {
-  await writeFileAsync(path.join(__dirname, rootDir, 'organization.json'), prettyJson(organization))
+  await writeFileAsync(
+    path.join(__dirname, rootDir, 'organization.json'),
+    prettyJson(organization),
+  )
   return organization
 }
 
@@ -44,4 +53,3 @@ module.exports = {
   writeOrganization,
   createDataFolder,
 }
-

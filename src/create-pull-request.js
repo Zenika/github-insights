@@ -18,12 +18,7 @@ const branch = `insights-${getDate()}`
 
 createBranchFromMaster(client, branch)
   .then(() => readFile('data/stats.json', 'base64'))
-  .then(content => updateFile(
-    client,
-    'src/data/stats.json',
-    content,
-    branch,
-  ))
+  .then(content => updateFile(client, 'src/data/stats.json', content, branch))
   .then(({ data }) => data.commit.message)
   .then(title => createPullRequest(client, branch, title))
   .catch(error => {
@@ -32,42 +27,44 @@ createBranchFromMaster(client, branch)
   })
 
 function createBranchFromMaster(client, branch) {
-  return client.repos.getBranch({
-    ...COMMON_PAYLOAD,
-    branch: 'master',
-  })
-  .then(branch => branch.data.commit.sha)
-  .then(sha => {
-    return client.git.createRef({
+  return client.repos
+    .getBranch({
       ...COMMON_PAYLOAD,
-      ref: `refs/heads/${branch}`,
-      sha,
+      branch: 'master',
     })
-  })
-  .catch(() => {
-    console.log(`Branch "${branch}" already exists: skip creation.`)
-  })
+    .then(branch => branch.data.commit.sha)
+    .then(sha => {
+      return client.git.createRef({
+        ...COMMON_PAYLOAD,
+        ref: `refs/heads/${branch}`,
+        sha,
+      })
+    })
+    .catch(() => {
+      console.log(`Branch "${branch}" already exists: skip creation.`)
+    })
 }
 
 function updateFile(client, path, content, branch, date = getDate()) {
-  return client.repos.getContents({
-    ...COMMON_PAYLOAD,
-    path,
-    ref: branch,
-  })
-  .then(content => content.data)
-  .then(({ name, sha }) => {
-    const message = `:card_file_box: Update ${name} ${date}`
-
-    return client.repos.createOrUpdateFile({
+  return client.repos
+    .getContents({
       ...COMMON_PAYLOAD,
-      branch,
       path,
-      message,
-      content,
-      sha,
+      ref: branch,
     })
-  })
+    .then(content => content.data)
+    .then(({ name, sha }) => {
+      const message = `:card_file_box: Update ${name} ${date}`
+
+      return client.repos.createOrUpdateFile({
+        ...COMMON_PAYLOAD,
+        branch,
+        path,
+        message,
+        content,
+        sha,
+      })
+    })
 }
 
 function createPullRequest(client, head, title) {
