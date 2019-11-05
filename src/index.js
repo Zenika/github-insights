@@ -9,7 +9,13 @@ const {
   ORGANIZATION_LOADED,
 } = require('./core.js')
 
-const { sleep, createDataFolder, writeMember, writeMembers, writeOrganization } = require('./utils')
+const {
+  sleep,
+  createDataFolder,
+  writeMember,
+  writeMembers,
+  writeOrganization,
+} = require('./utils')
 
 require('yargs')
   .command(
@@ -19,7 +25,7 @@ require('yargs')
       organization: {
         alias: 'o',
         default: process.env.GITHUB_ORGA,
-      }
+      },
     },
     async function(argv) {
       const githubOrganization = argv.organization
@@ -28,11 +34,11 @@ require('yargs')
 
       await createDataFolder()
 
-      let bar 
+      let bar
       const generator = generateOrganizationData(githubOrganization)
 
       for await (const event of generator) {
-        switch(event.type) {
+        switch (event.type) {
           case MEMBERS_LOADED:
             const members = event.value
             writeMembers(members)
@@ -47,7 +53,7 @@ require('yargs')
           case START_ENHANCING_MEMBER:
             bar.tick({ login: event.value })
             break
-          case ENHANCING_MEMBER_DONE: 
+          case ENHANCING_MEMBER_DONE:
             writeMember(event.value)
             break
           case ORGANIZATION_LOADED:
@@ -55,8 +61,6 @@ require('yargs')
             break
         }
       }
-    }
+    },
   )
-  .help()
-  .argv
-
+  .help().argv
