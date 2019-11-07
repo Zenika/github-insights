@@ -6,10 +6,10 @@
     "github-insights": "./src/index.js"
   },
   "scripts": {
-    "start": "NODE_ENV=development node src/index.js",
-    "stats": "NODE_ENV=development node src/stats.js",
-    "stats:file": "NODE_ENV=development node src/stats.js file",
-    "pr": "NODE_ENV=development node src/create-pull-request.js"
+    "start": "node src/index.js",
+    "stats": "node src/stats.js",
+    "stats:file": "node src/stats.js file",
+    "pr": "node src/create-pull-request.js"
   },
   "license": "MIT",
   "dependencies": {
