@@ -14,8 +14,15 @@ const START_ENHANCING_MEMBER = 'START_ENHANCING_MEMBER'
 const ENHANCING_MEMBER_DONE = 'ENHANCING_MEMBER_DONE'
 const ORGANIZATION_LOADED = 'ORGANIZATION_LOADED'
 
-async function* generateOrganizationData(githubOrganization) {
-  const members = await getMembersByOrganization(githubOrganization)
+async function* generateOrganizationData(githubOrganizations) {
+  let members = []
+
+  for (githubOrganization of githubOrganizations) {
+    const organizationMembers = await getMembersByOrganization(githubOrganization)
+    members = [...members, ...organizationMembers] 
+  }
+
+  members = filterNonUniqueBy(members, (a, b) => a.login === b.login)
   yield { type: MEMBERS_LOADED, value: members }
 
   for (member of members) {
@@ -44,9 +51,14 @@ async function* generateOrganizationData(githubOrganization) {
     }
   }
 
-  const organization = await getRepositoriesByOrganization(githubOrganization)
-  yield { type: ORGANIZATION_LOADED, value: organization }
+  for (githubOrganization of githubOrganizations) {
+    const organization = await getRepositoriesByOrganization(githubOrganization)
+    yield { type: ORGANIZATION_LOADED, value: organization, name: githubOrganization }
+  }
 }
+
+const filterNonUniqueBy = (arr, fn) =>
+  arr.filter((v, i) => arr.every((x, j) => (i === j) === fn(v, x, i, j)));
 
 module.exports = {
   generateOrganizationData,
