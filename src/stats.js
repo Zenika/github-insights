@@ -10,18 +10,25 @@
   const generateFile = !!process.argv[2]
   const stats = {}
 
-  // Get the Gihub organization based on the .env values or the organization.json 
+  // Get the Gihub organization based on the .env values or the organization.json
   if (process.env.GITHUB_ORGA) {
     stats.organization = process.env.GITHUB_ORGA
   } else {
     const firstOrganizationFile = fs.readdirSync(organizationsFolder)[0]
     console.log(path.join(organizationsFolder, firstOrganizationFile))
-    stats.organization = JSON.parse(fs.readFileSync(path.join(organizationsFolder, firstOrganizationFile)))[0].owner.login
+    stats.organization = JSON.parse(
+      fs.readFileSync(path.join(organizationsFolder, firstOrganizationFile)),
+    )[0].owner.login
   }
 
-  const members = fs.readdirSync(path.join(__dirname, dataFolder))
-    .filter(file => !['members.json', 'organizations', 'stats.json'].includes(file))
-    .map(file => JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, file))))
+  const members = fs
+    .readdirSync(path.join(__dirname, dataFolder))
+    .filter(
+      file => !['members.json', 'organizations', 'stats.json'].includes(file),
+    )
+    .map(file =>
+      JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, file))),
+    )
   stats.totalMembers = members.length
 
   const membersWithRepositories = members.filter(
@@ -71,10 +78,18 @@
     .slice(0, 10)
     .map(([repo, count]) => ({ repo, count }))
 
-  const organizationRepositories = fs.readdirSync(organizationsFolder)
-    .map(file => JSON.parse(fs.readFileSync(path.join(__dirname, dataFolder, 'organizations', file))))
+  const organizationRepositories = fs
+    .readdirSync(organizationsFolder)
+    .map(file =>
+      JSON.parse(
+        fs.readFileSync(
+          path.join(__dirname, dataFolder, 'organizations', file),
+        ),
+      ),
+    )
+    .map(organization => organization.repositories)
     .flatMap(repositories => repositories)
-    
+
   stats.totalOrganizationRepositories = organizationRepositories.length
   stats.topOrganizationRepositories = organizationRepositories
     .reduce((acc, next) => {
