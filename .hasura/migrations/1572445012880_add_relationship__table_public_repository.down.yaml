@@ -1,0 +1,6 @@
+- args:
+    relationship: primary_language
+    table:
+      name: repository
+      schema: public
+  type: drop_relationship

@@ -1,0 +1,6 @@
+- args:
+    sql: ALTER TABLE "public"."contributors" ADD COLUMN "login" text
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."contributors" ALTER COLUMN "login" DROP NOT NULL
+  type: run_sql

@@ -1,0 +1,35 @@
+- args:
+    permission:
+      check: {}
+      columns:
+      - contribution_count
+      filter: {}
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository_contributor
+      schema: public
+  type: create_select_permission
+- args:
+    role: github-connector
+    table:
+      name: repository_contributor
+      schema: public
+  type: drop_insert_permission
+- args:
+    permission:
+      check: {}
+      columns:
+      - contribution_count
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository_contributor
+      schema: public
+  type: create_insert_permission

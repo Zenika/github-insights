@@ -1,0 +1,5 @@
+- args:
+    sql: alter table "public"."repository" add foreign key ("primary_language_id")
+      references "public"."programming_language"("id") on update cascade on delete
+      set null;
+  type: run_sql

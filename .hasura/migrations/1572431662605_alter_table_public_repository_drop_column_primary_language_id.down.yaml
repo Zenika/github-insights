@@ -1,0 +1,7 @@
+- args:
+    sql: ALTER TABLE "public"."repository" ADD COLUMN "primary_language_id" text
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."repository" ALTER COLUMN "primary_language_id" DROP
+      NOT NULL
+  type: run_sql

@@ -1,0 +1,7 @@
+- args:
+    sql: alter table "public"."organizations" drop constraint "organizations_pkey";
+  type: run_sql
+- args:
+    sql: "alter table \"public\".\"organizations\"\n    add constraint \"organizations_pkey\"
+      \n    primary key ( \"id\" );"
+  type: run_sql

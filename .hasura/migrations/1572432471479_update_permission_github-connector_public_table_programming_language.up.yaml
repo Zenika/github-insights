@@ -1,0 +1,15 @@
+- args:
+    permission:
+      allow_upsert: true
+      check: {}
+      columns:
+      - name
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: programming_language
+      schema: public
+  type: create_insert_permission

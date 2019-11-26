@@ -1,0 +1,6 @@
+- args:
+    sql: "\n           alter table \"public\".\"repositories\"\n           add constraint
+      \"repositories_owner_login_fkey\" \n           foreign key (\"owner_login\")
+      \n           references \"public\".\"owners\"\n           (\"login\") on update
+      cascade on delete restrict;\n      "
+  type: run_sql

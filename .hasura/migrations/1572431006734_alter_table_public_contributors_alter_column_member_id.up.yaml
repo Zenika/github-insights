@@ -1,0 +1,4 @@
+- args:
+    sql: COMMENT ON COLUMN "public"."contributors"."member_id" IS E'If this contributor
+      is also a member, this is its id'
+  type: run_sql

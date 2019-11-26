@@ -1,0 +1,6 @@
+- args:
+    sql: alter table "public"."repositories" drop constraint "repositories_pkey";
+  type: run_sql
+- sql: "alter table \"public\".\"repositories\"\n    add constraint \"repositories_pkey\"
+    \n    primary key ( \"name_with_owner\" );"
+  type: run_sql

@@ -1,0 +1,13 @@
+- args:
+    sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  type: run_sql
+- args:
+    sql: CREATE TABLE "public"."contributors"("login" text NOT NULL, "repository_id"
+      text NOT NULL, "contribution_count" integer NOT NULL, "observed_at" timestamptz
+      NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT gen_random_uuid(), PRIMARY
+      KEY ("id") );
+  type: run_sql
+- args:
+    name: contributors
+    schema: public
+  type: add_existing_table_or_view

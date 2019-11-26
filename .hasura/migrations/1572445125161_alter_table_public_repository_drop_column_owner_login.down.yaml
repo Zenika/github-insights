@@ -1,0 +1,11 @@
+- args:
+    sql: ALTER TABLE "public"."repository" ADD COLUMN "owner_login" text
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."repository" ALTER COLUMN "owner_login" DROP NOT NULL
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."repository" ADD CONSTRAINT repositories_owner_login_fkey
+      FOREIGN KEY (owner_login) REFERENCES "public"."owner" (login) ON DELETE restrict
+      ON UPDATE cascade
+  type: run_sql

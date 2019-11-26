@@ -1,0 +1,6 @@
+- args:
+    role: github-connector
+    table:
+      name: owner
+      schema: public
+  type: drop_update_permission

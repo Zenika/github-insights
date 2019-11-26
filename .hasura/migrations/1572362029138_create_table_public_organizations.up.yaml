@@ -1,0 +1,8 @@
+- args:
+    sql: CREATE TABLE "public"."organizations"("login" text NOT NULL, PRIMARY KEY
+      ("login") );
+  type: run_sql
+- args:
+    name: organizations
+    schema: public
+  type: add_existing_table_or_view

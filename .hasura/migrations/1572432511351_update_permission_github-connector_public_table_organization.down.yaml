@@ -1,0 +1,6 @@
+- args:
+    role: github-connector
+    table:
+      name: organization
+      schema: public
+  type: drop_insert_permission

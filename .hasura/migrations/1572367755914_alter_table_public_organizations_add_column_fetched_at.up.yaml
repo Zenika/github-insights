@@ -1,0 +1,4 @@
+- args:
+    sql: ALTER TABLE "public"."organizations" ADD COLUMN "fetched_at" timestamptz
+      NOT NULL DEFAULT now();
+  type: run_sql

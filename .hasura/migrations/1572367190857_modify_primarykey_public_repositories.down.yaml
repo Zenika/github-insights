@@ -1,0 +1,3 @@
+- sql: "alter table \"public\".\"repositories\"\n    add constraint \"repositories_pkey\"
+    \n    primary key ( \"id\" );"
+  type: run_sql

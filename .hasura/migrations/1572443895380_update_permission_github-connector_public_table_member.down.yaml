@@ -1,0 +1,21 @@
+- args:
+    role: github-connector
+    table:
+      name: member
+      schema: public
+  type: drop_insert_permission
+- args:
+    permission:
+      check: {}
+      columns:
+      - login
+      - name
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: member
+      schema: public
+  type: create_insert_permission

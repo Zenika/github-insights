@@ -28,14 +28,14 @@ require('yargs')
       },
     },
     async function(argv) {
-      const githubOrganization = argv.organization
+      const githubOrganizations = !Array.isArray(argv.organization) ? [argv.organization] : argv.organization
       const githubId = process.env.GITHUB_ID
       const githubToken = process.env.GITHUB_OAUTH
 
       await createDataFolder()
 
-      let bar
-      const generator = generateOrganizationData(githubOrganization)
+      let bar 
+      const generator = generateOrganizationData(githubOrganizations)
 
       for await (const event of generator) {
         switch (event.type) {
@@ -57,7 +57,7 @@ require('yargs')
             writeMember(event.value)
             break
           case ORGANIZATION_LOADED:
-            writeOrganization(event.value)
+            writeOrganization(event.name, event.value)
             break
         }
       }

@@ -1,0 +1,6 @@
+- args:
+    sql: "\n             alter table \"public\".\"repository\" drop constraint \"repository_primary_language_id_fkey\",\n
+      \            add constraint \"repository_primary_language_id_fkey\" \n             foreign
+      key (\"primary_language_id\") \n             references \"public\".\"programming_language\"\n
+      \            (\"id\") on update cascade on delete set null;\n      "
+  type: run_sql

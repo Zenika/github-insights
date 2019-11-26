@@ -1,0 +1,6 @@
+- args:
+    sql: "\n           alter table \"public\".\"organizations\"\n           add constraint
+      \"organizations_login_fkey\" \n           foreign key (\"login\") \n           references
+      \"public\".\"owners\"\n           (\"login\") on update cascade on delete cascade;\n
+      \     "
+  type: run_sql

@@ -1,0 +1,4 @@
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" DROP COLUMN "member_id"
+      CASCADE
+  type: run_sql

@@ -1,0 +1,17 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - name
+      - name_with_owner
+      - owner_login
+      - primary_language_id
+      - stars
+      - url
+      computed_fields: []
+      filter: {}
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: create_select_permission

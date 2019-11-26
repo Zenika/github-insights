@@ -20,6 +20,7 @@ async function createDataFolder() {
   const folderPath = path.join(__dirname, rootDir)
   const alreadyExists = await existsAsync(folderPath)
   if (!alreadyExists) return mkdirAsync(folderPath)
+    .then(() => mkdirAsync(path.join(folderPath, 'organizations')))
 }
 
 async function writeMember(member) {
@@ -38,9 +39,9 @@ async function writeMembers(members) {
   return members
 }
 
-async function writeOrganization(organization) {
+async function writeOrganization(name, organization) {
   await writeFileAsync(
-    path.join(__dirname, rootDir, 'organization.json'),
+    path.join(__dirname, rootDir, 'organizations', `${name}.json`),
     prettyJson(organization),
   )
   return organization

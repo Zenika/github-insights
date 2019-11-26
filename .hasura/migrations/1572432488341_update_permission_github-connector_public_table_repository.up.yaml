@@ -1,0 +1,20 @@
+- args:
+    permission:
+      allow_upsert: true
+      check: {}
+      columns:
+      - name
+      - name_with_owner
+      - owner_login
+      - primary_language_id
+      - stars
+      - url
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: create_insert_permission

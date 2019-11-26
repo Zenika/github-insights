@@ -1,0 +1,7 @@
+- args:
+    sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ADD COLUMN "id" uuid NOT
+      NULL DEFAULT gen_random_uuid();
+  type: run_sql

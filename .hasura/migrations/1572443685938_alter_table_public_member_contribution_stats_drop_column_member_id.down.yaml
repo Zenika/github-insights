@@ -1,0 +1,16 @@
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ADD COLUMN "member_id" uuid
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ALTER COLUMN "member_id"
+      DROP NOT NULL
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ADD CONSTRAINT member_contribution_stats_member_id_fkey
+      FOREIGN KEY (member_id) REFERENCES "public"."member" (id) ON DELETE restrict
+      ON UPDATE cascade
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ADD CONSTRAINT member_contribution_stats_member_id_key
+      UNIQUE (member_id)
+  type: run_sql

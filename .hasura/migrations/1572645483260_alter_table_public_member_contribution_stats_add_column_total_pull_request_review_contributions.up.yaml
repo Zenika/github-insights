@@ -1,0 +1,4 @@
+- args:
+    sql: ALTER TABLE "public"."member_contribution_stats" ADD COLUMN "total_pull_request_review_contributions"
+      integer NULL;
+  type: run_sql
