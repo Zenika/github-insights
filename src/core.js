@@ -29,6 +29,22 @@ async function* generateOrganizationData(githubOrganizations) {
   members = filterNonUniqueBy(members, (a, b) => a.login === b.login)
   yield { type: MEMBERS_LOADED, value: members }
 
+  for (githubOrganization of githubOrganizations) {
+    const organizationRepositories = await getRepositoriesByOrganization(
+      githubOrganization,
+    )
+    const organization = {
+      name: githubOrganization,
+      members: membersByOrganisation[githubOrganization],
+      repositories: organizationRepositories,
+    }
+    yield {
+      type: ORGANIZATION_LOADED,
+      value: organization,
+      name: githubOrganization,
+    }
+  }
+
   for (member of members) {
     yield { type: START_ENHANCING_MEMBER, value: member.login }
 
@@ -56,22 +72,6 @@ async function* generateOrganizationData(githubOrganizations) {
     yield {
       type: ENHANCING_MEMBER_DONE,
       value: { ...member, repositories, contributionsCollection },
-    }
-  }
-
-  for (githubOrganization of githubOrganizations) {
-    const organizationRepositories = await getRepositoriesByOrganization(
-      githubOrganization,
-    )
-    const organization = {
-      name: githubOrganization,
-      members: membersByOrganisation[githubOrganization],
-      repositories: organizationRepositories,
-    }
-    yield {
-      type: ORGANIZATION_LOADED,
-      value: organization,
-      name: githubOrganization,
     }
   }
 }
