@@ -56,17 +56,30 @@ async function* generateOrganizationData(githubOrganizations) {
 
     for (repository of repositories) {
       await sleep(25)
-      try {
-        const contributors = await getRepositoryContributors(
+
+      let attempts = 0
+      let contributors
+
+      do {
+        if (attempts > 0) {
+          console.log('Retry fetch contributors for ', repository.name)
+          await sleep(1000)
+        }
+        contributors = await getRepositoryContributors(
           repository.owner.login,
           repository.name,
         )
-        repository.contributors = contributors.map(
-          ({ weeks, ...contributor }) => contributor,
-        )
-      } catch (e) {
-        console.error('ERREUR', repository.owner.login, repository.name)
+        attempts++
+      } while (!Array.isArray(contributors) && attempts < 3)
+
+      if (!Array.isArray(contributors)) {
+        console.log('Too much retry, set empty value: ', repository.name)
+        contributors = []
       }
+
+      repository.contributors = contributors.map(
+        ({ weeks, ...contributor }) => contributor,
+      )
     }
 
     yield {
