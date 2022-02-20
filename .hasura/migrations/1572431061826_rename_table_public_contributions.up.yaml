@@ -1,0 +1,3 @@
+- args:
+    sql: alter table "public"."contributions" rename to "member_contribution_stats";
+  type: run_sql

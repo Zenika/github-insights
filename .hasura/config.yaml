@@ -1,0 +1,2 @@
+admin_secret: hasura
+endpoint: http://localhost:8080

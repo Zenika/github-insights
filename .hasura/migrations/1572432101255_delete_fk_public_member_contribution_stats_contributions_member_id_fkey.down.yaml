@@ -1,0 +1,4 @@
+- args:
+    sql: alter table "public"."member_contribution_stats" add foreign key ("member_id")
+      references "public"."members"("id") on update cascade on delete cascade;
+  type: run_sql

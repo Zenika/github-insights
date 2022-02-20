@@ -1,0 +1,6 @@
+- args:
+    sql: "\n           alter table \"public\".\"contributors\"\n           add constraint
+      \"contributors_member_id_fkey\" \n           foreign key (\"member_id\") \n
+      \          references \"public\".\"members\"\n           (\"id\") on update
+      cascade on delete set null;\n      "
+  type: run_sql

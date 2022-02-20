@@ -1,0 +1,14 @@
+- args:
+    permission:
+      columns:
+      - login
+      filter: {}
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: owner
+      schema: public
+  type: create_update_permission

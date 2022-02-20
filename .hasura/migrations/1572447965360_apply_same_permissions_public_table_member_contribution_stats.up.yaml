@@ -1,0 +1,35 @@
+- args:
+    permission:
+      check: {}
+      columns:
+      - total_issue_contributions
+      filter: {}
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: member_contribution_stats
+      schema: public
+  type: create_select_permission
+- args:
+    role: github-connector
+    table:
+      name: member_contribution_stats
+      schema: public
+  type: drop_insert_permission
+- args:
+    permission:
+      check: {}
+      columns:
+      - total_issue_contributions
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: member_contribution_stats
+      schema: public
+  type: create_insert_permission

@@ -1,0 +1,6 @@
+- args:
+    relationship: repositories
+    table:
+      name: member
+      schema: public
+  type: drop_relationship

@@ -1,0 +1,4 @@
+- args:
+    sql: ALTER TABLE "public"."repositories" ADD COLUMN "last_seen_at" timestamptz
+      NOT NULL;
+  type: run_sql

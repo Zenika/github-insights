@@ -1,0 +1,10 @@
+- args:
+    sql: ALTER TABLE "public"."contributors" ADD COLUMN "observed_at" timestamptz
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."contributors" ALTER COLUMN "observed_at" DROP NOT NULL
+  type: run_sql
+- args:
+    sql: ALTER TABLE "public"."contributors" ALTER COLUMN "observed_at" SET DEFAULT
+      now()
+  type: run_sql

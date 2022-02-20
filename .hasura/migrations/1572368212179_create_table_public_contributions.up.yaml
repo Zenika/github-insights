@@ -1,0 +1,13 @@
+- args:
+    sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  type: run_sql
+- args:
+    sql: CREATE TABLE "public"."contributions"("id" uuid NOT NULL DEFAULT gen_random_uuid(),
+      "member_id" uuid NOT NULL, "total_issue_contributions" integer NOT NULL, PRIMARY
+      KEY ("id") , FOREIGN KEY ("member_id") REFERENCES "public"."members"("id") ON
+      UPDATE cascade ON DELETE cascade);
+  type: run_sql
+- args:
+    name: contributions
+    schema: public
+  type: add_existing_table_or_view

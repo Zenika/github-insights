@@ -1,0 +1,20 @@
+- args:
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - name
+      - stars
+      - url
+      computed_fields: []
+      filter: {}
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: create_select_permission

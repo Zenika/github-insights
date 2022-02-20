@@ -1,0 +1,41 @@
+- args:
+    permission:
+      check: {}
+      columns:
+      - name
+      - name_with_owner
+      - stars
+      - url
+      filter: {}
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: create_select_permission
+- args:
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: drop_insert_permission
+- args:
+    permission:
+      check: {}
+      columns:
+      - name
+      - name_with_owner
+      - stars
+      - url
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: github-connector
+    table:
+      name: repository
+      schema: public
+  type: create_insert_permission
