@@ -33,9 +33,12 @@ async function* generateOrganizationData(githubOrganization) {
         repository.owner.login,
         repository.name,
       )
-      repository.contributors = contributors.map(
-        ({ weeks, ...contributor }) => contributor,
-      )
+      if (contributors.map) {
+        // seems like some repositories have empty contributors list, which trigger some weird misbehaviours
+        repository.contributors = contributors.map(
+          ({ weeks, ...contributor }) => contributor,
+        )
+      }
     }
 
     yield {
