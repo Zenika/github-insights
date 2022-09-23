@@ -30,7 +30,7 @@ You have to create a token with the `read:org` access.
 The following command allows you to get information on your organization. The generated files may be found in the `data` folder.
 
 ```
-yarn start <organization_name>
+yarn start generate
 ```
 
 The following command allows you to get insights from your organization's information.
