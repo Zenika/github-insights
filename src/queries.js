@@ -27,7 +27,8 @@ async function getRateLimit() {
 async function getRepositoryContributors(owner, repository) {
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${owner}/${repository}/stats/contributors?access_token=${githubToken}`,
+      `https://api.github.com/repos/${owner}/${repository}/stats/contributors
+      `,
       { headers: { 'User-Agent': githubId } },
     )
     if (!res.ok) {
@@ -36,7 +37,7 @@ async function getRepositoryContributors(owner, repository) {
     if (res.status === 204) {
       return []
     }
-    return res.json()
+    return [res.json()]
   } catch (e) {
     console.log(e)
     process.exit(0)

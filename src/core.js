@@ -28,7 +28,7 @@ async function* generateOrganizationData(githubOrganization) {
     const repositories = await getRepositoriesByUser(member.login)
 
     for (repository of repositories) {
-      await sleep(25)
+      await sleep(1000)
       const contributors = await getRepositoryContributors(
         repository.owner.login,
         repository.name,
