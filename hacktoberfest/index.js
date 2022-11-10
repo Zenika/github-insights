@@ -27,12 +27,23 @@ exports.hacktoberfest = async (req, res) => {
 
   const githubId = process.env.GITHUB_ID
   const githubToken = process.env.GITHUB_OAUTH
+  const gitlabToken = process.env.GITLAB_TOKEN
 
-  const client = new ApolloClient({
+  const clientGitHub = new ApolloClient({
     uri: `https://api.github.com/graphql?access_token=${githubToken}`,
     headers: {
       'User-Agent': githubId,
       Authorization: `token ${githubToken}`,
+    },
+    fetch,
+  })
+
+  const clientGitLab = new ApolloClient({
+    uri: `https://gitlab.com/api/graphql`,
+    headers: {
+      'User-Agent': githubId,
+      Authorization: `Bearer ${gitlabToken}`,
+      'Content-Type': 'application/json',
     },
     fetch,
   })
@@ -48,32 +59,67 @@ exports.hacktoberfest = async (req, res) => {
   console.log(JSON.stringify(handles))
 
   const data = await Promise.all(
-    Object.keys(handles).map(async handle => {
+    Object.entries(handles).map(async infosUser => {
       await sleep(25)
       try {
-        const response = await client.query({
-          query: gql`
-            query getUserPullRequest($login: String!) {
-              user(login: $login) {
-                login
-                contributionsCollection(
-                  from: "2022-10-01T00:00:00Z"
-                  to: "2022-10-31T23:59:59Z"
-                ) {
-                  pullRequestContributions(first: 1) {
-                    totalCount
+        if (infosUser[1].github && infosUser[1].github.handle) {
+          const responseGitHub = await clientGitHub.query({
+            query: gql`
+              query getUserPullRequest($login: String!) {
+                user(login: $login) {
+                  login
+                  contributionsCollection(
+                    from: "2022-10-01T00:00:00Z"
+                    to: "2022-10-31T23:59:59Z"
+                  ) {
+                    pullRequestContributions(first: 1) {
+                      totalCount
+                    }
                   }
                 }
               }
-            }
-          `,
-          variables: {
-            login: handle,
-          },
-        })
-        return response.data
+            `,
+            variables: {
+              login: infosUser[1].github.handle,
+            },
+          })
+
+          // update json
+          infosUser[1].github.nbContributions =
+            responseGitHub.data.user.contributionsCollection.pullRequestContributions.totalCount
+        }
+
+        if (infosUser[1].gitlab && infosUser[1].gitlab.handle) {
+          const responseGitLab = await clientGitLab.query({
+            query: gql`
+              query getUserMR($login: String!) {
+                users(usernames: [$login]) {
+                  nodes {
+                    username
+                    authoredMergeRequests(
+                      createdAfter: "2022-10-01T00:00:00+00:00"
+                      createdBefore: "2022-10-31T00:00:00+00:00"
+                      state: merged
+                    ) {
+                      count
+                    }
+                  }
+                }
+              }
+            `,
+            variables: {
+              login: infosUser[1].gitlab.handle,
+            },
+          })
+
+          // update json
+          infosUser[1].gitlab.nbContributions =
+            responseGitLab.data.users.nodes[0].authoredMergeRequests.count
+        }
+
+        return infosUser
       } catch (e) {
-        console.log(JSON.stringify(e))
+        console.log('error : ' + e + ' | ' + JSON.stringify(e))
         return null
       }
     }),
