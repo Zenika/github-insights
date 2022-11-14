@@ -52,7 +52,7 @@ exports.hacktoberfest = async (req, res) => {
     return res.status(200).send(cache.data)
   }
 
-  const handles = await fetch('https://oss.zenika.com/hacktoberfest.json').then(
+  const handles = await fetch('https://oss.zenika.com/hacktoberfest-new.json').then(
     response => response.json(),
   )
 
@@ -129,10 +129,10 @@ exports.hacktoberfest = async (req, res) => {
 
   const filteredData = data.filter(Boolean)
 
-  filteredData.forEach(({ user }) => {
-    user.location = handles[user.login]
+  filteredData.forEach((user) => {
+    user.location = handles[user[1].name]
   })
-
+  
   cache.data = filteredData
   cache.ttl = new Date().addHours(1)
 
