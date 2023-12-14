@@ -1,5 +1,32 @@
+require('dotenv').config();
+
 const fetch = require('node-fetch')
 const { default: ApolloClient, gql } = require('apollo-boost')
+
+const githubId = process.env.GITHUB_ID
+const githubToken = process.env.GITHUB_OAUTH
+const gitlabToken = process.env.GITLAB_TOKEN
+
+const clientGitHub = new ApolloClient({
+  uri: `https://api.github.com/graphql?access_token=${githubToken}`,
+  headers: {
+    'User-Agent': githubId,
+    Authorization: `token ${githubToken}`,
+  },
+  fetch,
+})
+
+const clientGitLab = new ApolloClient({
+  uri: `https://gitlab.com/api/graphql`,
+  headers: {
+    'User-Agent': githubId,
+    Authorization: `Bearer ${gitlabToken}`,
+    'Content-Type': 'application/json',
+  },
+  fetch,
+})
+
+hacktoberfest(2023)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -15,44 +42,11 @@ const cache = {
   ttl: new Date(),
 }
 
-exports.hacktoberfest = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*')
+async function hacktoberfest (year) {
+  
+  console.log("🤖 Start getting data for " + year + " ... ");
 
-  if (req.method === 'OPTIONS') {
-    res.set('Access-Control-Allow-Methods', 'GET')
-    res.set('Access-Control-Allow-Headers', 'Content-Type')
-    res.set('Access-Control-Max-Age', '3600')
-    return res.status(204).send('')
-  }
-
-  const githubId = process.env.GITHUB_ID
-  const githubToken = process.env.GITHUB_OAUTH
-  const gitlabToken = process.env.GITLAB_TOKEN
-
-  const clientGitHub = new ApolloClient({
-    uri: `https://api.github.com/graphql?access_token=${githubToken}`,
-    headers: {
-      'User-Agent': githubId,
-      Authorization: `token ${githubToken}`,
-    },
-    fetch,
-  })
-
-  const clientGitLab = new ApolloClient({
-    uri: `https://gitlab.com/api/graphql`,
-    headers: {
-      'User-Agent': githubId,
-      Authorization: `Bearer ${gitlabToken}`,
-      'Content-Type': 'application/json',
-    },
-    fetch,
-  })
-
-  if (cache.data.length > 0 && cache.ttl > new Date()) {
-    return res.status(200).send(cache.data)
-  }
-
-  const handles = await fetch('https://oss.zenika.com/hacktoberfest-new.json').then(
+  const handles = await fetch('https://oss.zenika.com/hacktoberfest.json').then(
     response => response.json(),
   )
 
@@ -69,8 +63,8 @@ exports.hacktoberfest = async (req, res) => {
                 user(login: $login) {
                   login
                   contributionsCollection(
-                    from: "2022-10-01T00:00:00Z"
-                    to: "2022-10-31T23:59:59Z"
+                    from: "2023-01-01T00:00:00Z"
+                    to: "2023-12-31T23:59:59Z"
                   ) {
                     pullRequestContributions(first: 1) {
                       totalCount
@@ -81,6 +75,7 @@ exports.hacktoberfest = async (req, res) => {
             `,
             variables: {
               login: infosUser[1].github.handle,
+              year: year
             },
           })
 
@@ -97,8 +92,8 @@ exports.hacktoberfest = async (req, res) => {
                   nodes {
                     username
                     authoredMergeRequests(
-                      createdAfter: "2022-10-01T00:00:00+00:00"
-                      createdBefore: "2022-10-31T00:00:00+00:00"
+                      createdAfter: "2023-01-01T00:00:00+00:00"
+                      createdBefore: "2023-12-31T00:00:00+00:00"
                       state: merged
                     ) {
                       count
@@ -125,7 +120,8 @@ exports.hacktoberfest = async (req, res) => {
     }),
   )
 
-  console.log(JSON.stringify(data))
+
+  console.log("\n" + JSON.stringify(data))
 
   const filteredData = data.filter(Boolean)
 
@@ -136,5 +132,5 @@ exports.hacktoberfest = async (req, res) => {
   cache.data = filteredData
   cache.ttl = new Date().addHours(1)
 
-  res.status(200).send(filteredData)
+  console.log("🤖 End ...");
 }
