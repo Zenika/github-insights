@@ -1,0 +1,7 @@
+# Hacktoberfest 
+
+This directory contains the Cloud function used to get number of contribution for people. 
+
+The list of contributors is in the oss.zenika.com website.
+
+⚠️ No CI exists on this project, so the cloud function has to be deployed manually (but it's in progress 😅)
