@@ -61,7 +61,6 @@ typings/
 .next
 
 CHANGELOG.json
-.vscode
 
 data
 .DS_Store
